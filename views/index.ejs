@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gHOST - Upload Site</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1a1a1a;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #2a2a2a;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            text-align: center;
+            width: 400px;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #a020f0;
+        }
+        input[type="file"] {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 2px solid #a020f0;
+            border-radius: 5px;
+            background-color: #1a1a1a;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        button {
+            background-color: #a020f0;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        button:hover {
+            background-color: #7b1fa2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>gH0ST</h1>
+        <p>
+          To create a new site, upload the folder.
+      </p>
+        <input type="file" id="folderInput" webkitdirectory multiple>
+        <button onclick="uploadFolder()">Upload Folder</button>
+    </div>
+
+    <script>
+        async function uploadFolder() {
+            const input = document.getElementById('folderInput');
+            const files = input.files;
+            const folderName = files[0].webkitRelativePath.split('/')[0];
+            const fileList = [];
+
+            for (const file of files) {
+                const reader = new FileReader();
+                const fileData = await new Promise((resolve, reject) => {
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+
+                fileList.push({
+                    name: file.webkitRelativePath.replace(folderName + '/', ''),
+                    data: fileData.split(',')[1]
+                });
+            }
+
+            const data = {
+                folderName: folderName,
+                files: fileList
+            };
+
+            const response = await fetch('/upload', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/octet-stream'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.text();
+            alert(result);
+        }
+    </script>
+</body>
+</html>
