@@ -4,8 +4,7 @@
   "description": "A simple Node.js application that allows users to host their websites by uploading a folder containing an index.html file and other assets. The folder name is used to construct the URL for accessing the site.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "postinstall": "npm install"
+    "start": "node server.js"
   },
   "author": "[wholeworldcoding]",
   "license": "MIT",
